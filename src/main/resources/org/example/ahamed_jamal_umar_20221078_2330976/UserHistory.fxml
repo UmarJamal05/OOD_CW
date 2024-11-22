@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.ahamed_jamal_umar_20221078_2330976.Controller"
+      spacing="10" alignment="CENTER" prefWidth="600" prefHeight="400">
+
+    <Label text="User History" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+
+    <ListView fx:id="historyListView" prefWidth="500" prefHeight="300" />
+</VBox>
