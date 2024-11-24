@@ -8,12 +8,4 @@ public class History {
         this.title = title;
         this.rating = rating;
     }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getRating() {
-        return rating;
-    }
 }

@@ -1,7 +1,5 @@
 package org.example.ahamed_jamal_umar_20221078_2330976;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,13 +8,14 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 public class Controller {
@@ -29,11 +28,15 @@ public class Controller {
     @FXML
     private Button exitButton;
     private String loggedInUsername;
+    @FXML
+    private TextField newPasswordField, newConfirmPasswordField;
 
     @FXML
     private Button backButton;
     @FXML
     private ListView<String> historyListView;
+    @FXML
+    private TextArea userDetailsTextArea;
 
     private static final String USER_FILE_PATH = "users.txt";
 
@@ -52,7 +55,7 @@ public class Controller {
         if (validateLogin(username, password)) {
             try {
                 // Load the Dashboard.fxml file
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("UserDashboard.fxml"));
                 Parent dashboardRoot = loader.load();
 
                 Controller Controller = loader.getController();
@@ -174,7 +177,7 @@ public class Controller {
 
     // Method to handle View Articles button click
     @FXML
-    public void viewButton(ActionEvent event) {
+    public void onViewArticle(ActionEvent event) {
         try {
             // Create a VBox to hold article buttons
             VBox articlesVBox = new VBox(10);
@@ -284,7 +287,8 @@ public class Controller {
 
             skipButton.setOnAction(e -> {
                 appendHistoryToCSV("skipped", article.getTitle());
-                showFeedback("Article skipped.");
+                Stage stage = (Stage) skipButton.getScene().getWindow();
+                stage.close();
             });
 
             HBox buttonsBox = new HBox(10, likeButton, dislikeButton, skipButton);
@@ -361,12 +365,12 @@ public class Controller {
                 }
             }
         } catch (IOException e) {
-            showAlert("Error", "Failed to load history file.", Alert.AlertType.ERROR);
+            showAlert("Warning","Empty History", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
-    public void viewHistory(ActionEvent event) {
+    public void onViewHistory(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("UserHistory.fxml"));
             Parent root = loader.load();
@@ -385,10 +389,19 @@ public class Controller {
     }
 
     private void saveUserDetails(User user) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE_PATH, true))) {
-            writer.write(user.toString());
-            writer.newLine();
-        } catch (IOException e) {
+        try {
+            File file = new File(USER_FILE_PATH);
+            boolean isFileEmpty = !file.exists() || file.length() == 0;
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE_PATH, true))) {
+                if (isFileEmpty) {
+                    writer.write("Username:Password:Firstname:Lastname:Email Address");
+                    writer.newLine();  // Move to the next line
+                }
+                writer.write(user.toString());
+                writer.newLine();
+            }
+            } catch (IOException e) {
             showAlert("Error", "Could not save user data.", Alert.AlertType.ERROR);
         }
     }
@@ -422,8 +435,166 @@ public class Controller {
     }
 
     @FXML
-    private void logoutButton(ActionEvent event) {
+    private void onLogoutButton(ActionEvent event) {
         Stage stage = (Stage) exitButton.getScene().getWindow();
         stage.close();
+    }
+    @FXML
+    public void onProfileToDashboard(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("UserDashboard.fxml"));
+            Parent root = loader.load();
+
+            Controller Controller = loader.getController();
+            Controller.setLoggedInUsername(loggedInUsername);
+
+            // Get the current stage
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            // Set the new scene
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not load the dashboard.", Alert.AlertType.ERROR);
+        }
+    }
+    public void showUserDetails(String loggedInUsername) {
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE_PATH))) {
+            String line;
+            StringBuilder userDetails = new StringBuilder();
+
+            // Skip the first line (header line)
+            reader.readLine();
+
+            // Loop through the file to find the matching username
+            while ((line = reader.readLine()) != null) {
+                String[] userDetailsArray = line.split(",");
+
+                if (userDetailsArray.length == 5 && userDetailsArray[0].equals(loggedInUsername)) {
+                    userDetails.append("Username: ").append(userDetailsArray[0]).append("\n")
+                            .append("Password: ").append(userDetailsArray[1]).append("\n")
+                            .append("First Name: ").append(userDetailsArray[2]).append("\n")
+                            .append("Last Name: ").append(userDetailsArray[3]).append("\n")
+                            .append("Email: ").append(userDetailsArray[4]).append("\n");
+                    break;
+                }
+            }
+
+            // If no user is found with the loggedInUsername, display a message
+            if (userDetails.isEmpty()) {
+                userDetails.append("No details found for the username: ").append(loggedInUsername).append("\n");
+            }
+
+            userDetailsTextArea.setText(userDetails.toString());
+            userDetailsTextArea.setEditable(false);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    public void onManageProfile(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ManageProfile.fxml"));
+            Parent root = loader.load();
+
+            Controller Controller = loader.getController();
+            Controller.showUserDetails(loggedInUsername);
+            Controller.setLoggedInUsername(loggedInUsername);
+
+            // Get the current stage (window)
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            stage.setTitle("User Profile");
+            // Set the new scene for the stage (window)
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle the error appropriately (e.g., show an alert)
+        }
+    }
+    @FXML
+    public void onPasswordChange(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("PasswordChange.fxml"));
+            Parent root = loader.load();
+
+            Controller Controller = loader.getController();
+            Controller.setLoggedInUsername(loggedInUsername);
+
+            // Get the current stage (window)
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            // Set the new scene for the stage (window)
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle the error appropriately (e.g., show an alert)
+        }
+    }
+    @FXML
+    private void onChangePassword(ActionEvent event) {
+        String newPassword = newPasswordField.getText();
+        String confirmPassword = newConfirmPasswordField.getText();
+
+        if (!newPassword.equals(confirmPassword)) {
+            showAlert("Error", "Passwords do not match.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // Validate input
+        if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
+            showAlert("Error", "Fields cannot be empty.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // Update password in the file
+        try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE_PATH))) {
+            String line;
+            List<String> updatedLines = new ArrayList<>();
+            boolean userFound = false;
+
+            // Skip the first line (header line)
+            reader.readLine();
+
+            // Read each line and check for the matching username
+            while ((line = reader.readLine()) != null) {
+                String[] userDetails = line.split(",");
+
+                if (userDetails.length == 5 && userDetails[0].equals(loggedInUsername)) {
+                    // If username matches, update the password
+                    userDetails[1] = newPassword; // Update the password
+                    updatedLines.add(String.join(",", userDetails)); // Save the updated line
+                    userFound = true;
+                } else {
+                    updatedLines.add(line); // If no match, keep the current line
+                }
+            }
+
+            if (!userFound) {
+                showAlert("Error", "User not found.", Alert.AlertType.ERROR);
+                return;
+            }
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE_PATH))) {
+                writer.write("Username:Password:Firstname:Lastname:Email Address"); // Write header line again
+                writer.newLine();
+
+                // Write all updated lines
+                for (String updatedLine : updatedLines) {
+                    writer.write(updatedLine);
+                    writer.newLine();
+                }
+            }
+
+            showAlert("Success", "Password updated successfully!", Alert.AlertType.INFORMATION);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "An error occurred while updating the password.", Alert.AlertType.ERROR);
+        }
     }
 }
