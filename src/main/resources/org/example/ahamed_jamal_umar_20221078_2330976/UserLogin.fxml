@@ -26,7 +26,7 @@
             </font>
         </Label>
         <PasswordField fx:id="PasswordLoginInput" layoutX="53.0" layoutY="262.0" prefHeight="38.0" prefWidth="323.0" />
-        <Button layoutX="182.0" layoutY="340.0" mnemonicParsing="false" onAction="#loginButton" style="-fx-background-color: #4048d4;" text="LOG IN" textFill="WHITE">
+        <Button layoutX="182.0" layoutY="340.0" mnemonicParsing="false" onAction="#onUserLogin" style="-fx-background-color: #4048d4;" text="LOG IN" textFill="WHITE">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
@@ -36,5 +36,10 @@
                 <Font name="System Bold Italic" size="14.0" />
             </font>
         </Button>
+      <Button layoutX="50.0" layoutY="342.0" mnemonicParsing="false" onAction="#onWelcomePage" style="-fx-background-color: #4048d4;" text="Back" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
     </children>
 </AnchorPane>

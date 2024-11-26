@@ -7,12 +7,12 @@
 
 <AnchorPane prefHeight="373.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.ahamed_jamal_umar_20221078_2330976.Controller">
    <children>
-      <Button layoutX="85.0" layoutY="94.0" mnemonicParsing="false" style="-fx-background-color: #4048d4;" text="Preferences" textFill="WHITE">
+      <Button layoutX="85.0" layoutY="94.0" mnemonicParsing="false" onAction="#onPreferences" style="-fx-background-color: #4048d4;" text="Preferences" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Button>
-      <Button fx:id="viewArticle" layoutX="80.0" layoutY="150.0" mnemonicParsing="false" onAction="#onViewArticle" style="-fx-background-color: #4048d4;" text="View Articles" textFill="WHITE">
+      <Button layoutX="80.0" layoutY="150.0" mnemonicParsing="false" onAction="#onViewArticle" style="-fx-background-color: #4048d4;" text="View Articles" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>

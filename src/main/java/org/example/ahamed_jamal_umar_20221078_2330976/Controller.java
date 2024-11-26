@@ -1,5 +1,6 @@
 package org.example.ahamed_jamal_umar_20221078_2330976;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -16,8 +18,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
 public class Controller {
 
     public Button signupButton;
@@ -26,10 +29,16 @@ public class Controller {
     @FXML
     private TextField UsernameLoginInput, PasswordLoginInput;
     @FXML
+    private TextField SystemAdminName, SystemAdminPassword;
+    @FXML
     private Button exitButton;
     private String loggedInUsername;
     @FXML
     private TextField newPasswordField, newConfirmPasswordField;
+    @FXML
+    private TextField addCategoryField, addTitleField;
+    @FXML
+    private TextArea addDescriptionArea;
 
     @FXML
     private Button backButton;
@@ -37,13 +46,59 @@ public class Controller {
     private ListView<String> historyListView;
     @FXML
     private TextArea userDetailsTextArea;
+    @FXML
+    private ListView<String> preferenceListView;
 
     private static final String USER_FILE_PATH = "users.txt";
-
     @FXML
-    private void loginButton(ActionEvent event) {
-        String username = UsernameLoginInput.getText();
-        String password = PasswordLoginInput.getText();
+    public void onWelcomePage(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("WelcomePage.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            stage.setTitle("Personalized News Recommendation System");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    public void onSystemAdminPage(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("AdminLogin.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            stage.setTitle("Login Page");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    public void onUserPage(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("UserLogin.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            stage.setTitle("Login Page");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    private void onAdminLogin(ActionEvent event) {
+        String username = SystemAdminName.getText();
+        String password = SystemAdminPassword.getText();
 
         // Check if fields are empty
         if (username.isEmpty() || password.isEmpty()) {
@@ -51,8 +106,49 @@ public class Controller {
             return; // Stop further execution
         }
 
+        // Create an instance of SystemAdministrator
+        SystemAdministrator admin = new SystemAdministrator();
+
+        // Validate login credentials directly
+        if (username.equals(admin.getName()) && password.equals(admin.getPassword())) {
+            try {
+                // Load the Dashboard.fxml file
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("AdminDashboard.fxml"));
+                Parent dashboardRoot = loader.load();
+
+                // Get the current stage from the event source
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+                // Set the new scene with Dashboard.fxml
+                Scene scene = new Scene(dashboardRoot);
+                stage.setScene(scene);
+
+                // Optional: Set the title for the new stage
+                stage.setTitle("Dashboard");
+
+                // Show the stage
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                showAlert("Error", "Failed to load the Dashboard.", Alert.AlertType.ERROR);
+            }
+        } else {
+            showAlert("Login Failed", "Invalid name or password.", Alert.AlertType.ERROR);
+        }
+    }
+    @FXML
+    private void onUserLogin(ActionEvent event) {
+        String name = UsernameLoginInput.getText();
+        String password = PasswordLoginInput.getText();
+
+        // Check if fields are empty
+        if (name.isEmpty() || password.isEmpty()) {
+            showAlert("Login Failed", "All fields must be filled.", Alert.AlertType.ERROR);
+            return; // Stop further execution
+        }
+
         // Validate login
-        if (validateLogin(username, password)) {
+        if (validateLogin(name, password)) {
             try {
                 // Load the Dashboard.fxml file
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("UserDashboard.fxml"));
@@ -79,6 +175,77 @@ public class Controller {
             }
         } else {
             showAlert("Login Failed", "Invalid username or password.", Alert.AlertType.ERROR);
+        }
+    }
+
+    @FXML
+    public void onAddArticles(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("AddArticle.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            stage.setTitle("Add Article");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void onAddEnter() {
+        String category = addCategoryField.getText().trim();
+        String title = addTitleField.getText().trim();
+        String description = addDescriptionArea.getText().trim();
+
+        // Validate input fields
+        if (category.isEmpty() || title.isEmpty() || description.isEmpty()) {
+            showAlert("Input Error", "All fields must be filled.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        if (isTitleDuplicate(title)) {
+            showAlert("Duplicate Title", "An article with this title already exists.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // Format the article data
+        String articleData = String.format(
+                "%nCategory: %s%nTitle: %s%nDescription: %s",
+                category, title, description
+        );
+
+        // Append to the text file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("articles.txt", true))) {
+            writer.newLine();
+            writer.write(articleData);
+            showAlert("Success", "Article added successfully.", Alert.AlertType.INFORMATION);
+
+            // Clear the input fields
+            addCategoryField.clear();
+            addTitleField.clear();
+            addDescriptionArea.clear();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to save the article. Try again.", Alert.AlertType.ERROR);
+        }
+    }
+
+    @FXML
+    public void onArticleToDashboard(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("AdminDashboard.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            stage.setTitle("Dashboard");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -150,6 +317,12 @@ public class Controller {
         User newUser = new User(firstName, lastName, email, username, password);
         saveUserDetails(newUser);
         showAlert("Registration Successful", "User registered successfully!", Alert.AlertType.INFORMATION);
+        firstnameField.clear();
+        lastnameField.clear();
+        emailaddressField.clear();
+        usernameField.clear();
+        passwordField.clear();
+        confirmpasswordField.clear();
     }
 
     private boolean isValidEmail(String email) {
@@ -204,6 +377,24 @@ public class Controller {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean isTitleDuplicate(String title) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("articles.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("Title: ")) {
+                    String existingTitle = line.substring(7).trim(); // Extract title from "Title: <Title>"
+                    if (existingTitle.equalsIgnoreCase(title)) {
+                        return true; // Duplicate found
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to check for duplicate titles.", Alert.AlertType.ERROR);
+        }
+        return false; // No duplicate found
     }
 
     // Method to load articles from the file
@@ -474,7 +665,6 @@ public class Controller {
 
                 if (userDetailsArray.length == 5 && userDetailsArray[0].equals(loggedInUsername)) {
                     userDetails.append("Username: ").append(userDetailsArray[0]).append("\n")
-                            .append("Password: ").append(userDetailsArray[1]).append("\n")
                             .append("First Name: ").append(userDetailsArray[2]).append("\n")
                             .append("Last Name: ").append(userDetailsArray[3]).append("\n")
                             .append("Email: ").append(userDetailsArray[4]).append("\n");
@@ -528,6 +718,7 @@ public class Controller {
             // Get the current stage (window)
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 
+            stage.setTitle("Change Password");
             // Set the new scene for the stage (window)
             stage.setScene(new Scene(root));
             stage.show();
@@ -592,9 +783,170 @@ public class Controller {
             }
 
             showAlert("Success", "Password updated successfully!", Alert.AlertType.INFORMATION);
+            newPasswordField.clear();
+            newConfirmPasswordField.clear();
         } catch (IOException e) {
             e.printStackTrace();
             showAlert("Error", "An error occurred while updating the password.", Alert.AlertType.ERROR);
+        }
+    }
+    @FXML
+    private void onPreferenceToDashboard(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("UserDashboard.fxml"));
+            Parent root = loader.load();
+
+            Controller Controller = loader.getController();
+            Controller.setLoggedInUsername(loggedInUsername);
+
+            // Get the current stage (window)
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            stage.setTitle("Dashboard");
+            // Set the new scene for the stage (window)
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle the error appropriately (e.g., show an alert)
+        }
+    }
+    @FXML
+    private void onPreferences(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("UserPreference.fxml"));
+            Parent root = loader.load();
+
+            Controller Controller = loader.getController();
+            Controller.setLoggedInUsername(loggedInUsername);
+
+            // Generate recommendations for the user
+            Map<String, Integer> recommendations = Controller.generateRecommendations(loggedInUsername);
+            Platform.runLater(() -> Controller.displayRecommendations(recommendations));
+
+            // Get the current stage (window)
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            stage.setTitle("Preference");
+            // Set the new scene for the stage (window)
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle the error appropriately (e.g., show an alert)
+        }
+    }
+    // Method to load user history from username_history.csv
+    private List<History> loadUserHistory(String loggedInUsername) {
+        String historyFilePath = loggedInUsername + "_history.csv";
+
+        List<History> userHistory = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(historyFilePath))) {
+            String line;
+            Map<String, String> historyMap = new HashMap<>();
+            while ((line = reader.readLine()) != null) {
+                String[] userHistoryData = line.split(",");
+                if (userHistoryData.length == 3) {
+                    historyMap.put(userHistoryData[1].trim(), userHistoryData[2].trim());
+                }
+            }
+            userHistory = historyMap.entrySet()
+                    .stream()
+                    .map(e -> new History(e.getKey(), e.getValue()))
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return userHistory;
+    }
+
+    // Method to load articles from articles.txt
+    private Map<String, String> loadArticles() {
+        Map<String, String> articles = new HashMap<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader("articles.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] articleData = line.split(",");
+                if (articleData.length >= 2) {
+                    String topic = articleData[0];
+                    String description = articleData[1];
+                    articles.put(topic, description);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return articles;
+    }
+
+    // Method to extract relevant keywords (could be replaced with more advanced NLP techniques like TF-IDF or Sentiment Analysis)
+    private Set<String> extractKeywords(String description) {
+            Set<String> keywords = new HashSet<>();
+            String[] words = description.toLowerCase().replaceAll("[^a-z0-9\\s]", "").split("\\s+"); // Clean text
+            for (String word : words) {
+                if (word.length() > 3) { // Ignore very short words
+                    keywords.add(word);
+                }
+            }
+            return keywords;
+    }
+
+        // Method to generate recommendations based on user history and article topics
+    private Map<String, Integer> generateRecommendations(String loggedInUsername) {
+        Map<String, Integer> recommendations = new HashMap<>();
+        Map<String, String> articles = loadArticles(); // Key: Title, Value: Description
+        List<History> userHistory = loadUserHistory(loggedInUsername); // User's article history
+
+        // Extract keywords from articles
+        Map<String, Set<String>> articleKeywords = new HashMap<>();
+        for (Map.Entry<String, String> entry : articles.entrySet()) {
+            articleKeywords.put(entry.getKey(), extractKeywords(entry.getValue()));
+        }
+
+        // Extract keywords from user's liked articles
+        Set<String> likedKeywords = new HashSet<>();
+        for (History history : userHistory) {
+            if (history.getRating().equalsIgnoreCase("like")) {
+                String likedArticleTitle = history.getTitle();
+                likedKeywords.addAll(articleKeywords.getOrDefault(likedArticleTitle, new HashSet<>()));
+            }
+        }
+
+        // Compare liked keywords with other articles and calculate scores
+        for (Map.Entry<String, Set<String>> entry : articleKeywords.entrySet()) {
+            String articleTitle = entry.getKey();
+            Set<String> articleKeywordSet = entry.getValue();
+
+            // Skip articles the user has already interacted with
+            boolean alreadyInteracted = userHistory.stream()
+                    .anyMatch(history -> history.getTitle().equalsIgnoreCase(articleTitle));
+            if (alreadyInteracted) continue;
+
+            // Calculate score based on keyword matches
+            int score = 0;
+            for (String keyword : articleKeywordSet) {
+                if (likedKeywords.contains(keyword)) {
+                    score++; // Increment score for each matching keyword
+                }
+            }
+            recommendations.put(articleTitle, score);
+        }
+
+        return recommendations;
+    }
+
+    // Method to display the recommendations in the ListView
+    private void displayRecommendations(Map<String, Integer> recommendations) {
+        // Sort the recommendations by score in descending order
+        List<Map.Entry<String, Integer>> sortedRecommendations = new ArrayList<>(recommendations.entrySet());
+        sortedRecommendations.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue())); // Sort descending
+
+        // Clear the current list and add sorted article titles
+        preferenceListView.getItems().clear();
+        for (Map.Entry<String, Integer> entry : sortedRecommendations) {
+            if (entry.getValue() > 0) { // Only show articles with a positive score
+                preferenceListView.getItems().add(entry.getKey());
+            }
         }
     }
 }

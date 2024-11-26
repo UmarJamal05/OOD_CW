@@ -1,20 +1,20 @@
 package org.example.ahamed_jamal_umar_20221078_2330976;
 
 public class User extends Person{
+    private String username;
     private String firstName;
     private String lastName;
     private String email;
 
     public User(String firstName, String lastName, String email, String username, String password) {
-        super(username, password);
+        super(password);
+        this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
     }
-
-    @Override
     public String getUsername() {
-        return super.username;
+        return username;
     }
 
     @Override
