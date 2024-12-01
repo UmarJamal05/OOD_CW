@@ -7,27 +7,27 @@
 
 <AnchorPane prefHeight="373.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.ahamed_jamal_umar_20221078_2330976.Controller">
    <children>
-      <Button layoutX="85.0" layoutY="94.0" mnemonicParsing="false" onAction="#onPreferences" style="-fx-background-color: #4048d4;" text="Preferences" textFill="WHITE">
+      <Button layoutX="53.0" layoutY="94.0" mnemonicParsing="false" onAction="#onPreferences" style="-fx-background-color: #4048d4;" text="Recommendations" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Button>
-      <Button layoutX="80.0" layoutY="150.0" mnemonicParsing="false" onAction="#onViewArticle" style="-fx-background-color: #4048d4;" text="View Articles" textFill="WHITE">
+      <Button layoutX="72.0" layoutY="147.0" mnemonicParsing="false" onAction="#onViewArticle" style="-fx-background-color: #4048d4;" text="View Articles" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Button>
-      <Button layoutX="73.0" layoutY="200.0" mnemonicParsing="false" onAction="#onManageProfile" style="-fx-background-color: #4048d4;" text="Manage Profile" textFill="WHITE">
+      <Button layoutX="64.0" layoutY="200.0" mnemonicParsing="false" onAction="#onManageProfile" style="-fx-background-color: #4048d4;" text="Manage Profile" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Button>
-      <Button layoutX="98.0" layoutY="253.0" mnemonicParsing="false" onAction="#onViewHistory" style="-fx-background-color: #4048d4;" text="History" textFill="WHITE">
+      <Button layoutX="90.0" layoutY="253.0" mnemonicParsing="false" onAction="#onViewHistory" style="-fx-background-color: #4048d4;" text="History" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Button>
-      <Button fx:id="exitButton" layoutX="96.0" layoutY="306.0" mnemonicParsing="false" onAction="#onLogoutButton" style="-fx-background-color: #4048d4;" text="Log out" textFill="WHITE">
+      <Button fx:id="exitButton" layoutX="88.0" layoutY="306.0" mnemonicParsing="false" onAction="#onLogoutButton" style="-fx-background-color: #4048d4;" text="Log out" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>

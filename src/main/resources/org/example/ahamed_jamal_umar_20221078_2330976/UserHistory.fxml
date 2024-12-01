@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="400" prefWidth="600" spacing="10" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.ahamed_jamal_umar_20221078_2330976.Controller">
+<VBox alignment="CENTER" prefHeight="443.0" prefWidth="600" spacing="10" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.ahamed_jamal_umar_20221078_2330976.Controller">
 
     <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="User History" textFill="#4048d4">
       <font>
@@ -13,4 +13,9 @@
       </font></Label>
 
     <ListView fx:id="historyListView" prefHeight="300" prefWidth="500" />
+   <Label text="Oldest to Latest" textFill="#4048d4">
+      <font>
+         <Font name="System Bold" size="14.0" />
+      </font>
+   </Label>
 </VBox>

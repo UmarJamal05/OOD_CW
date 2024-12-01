@@ -45,12 +45,12 @@
         <TextField fx:id="usernameField" layoutX="120.0" layoutY="197.0" prefHeight="26.0" prefWidth="352.0" />
         <PasswordField fx:id="passwordField" layoutX="119.0" layoutY="235.0" prefHeight="26.0" prefWidth="352.0" />
         <PasswordField fx:id="confirmpasswordField" layoutX="160.0" layoutY="282.0" prefHeight="26.0" prefWidth="311.0" />
-        <Button layoutX="271.0" layoutY="333.0" mnemonicParsing="false" onAction="#registersignupButton" style="-fx-background-color: #4048d4;" text="Sign Up" textFill="WHITE">
+        <Button layoutX="271.0" layoutY="333.0" mnemonicParsing="false" onAction="#onRegisterSignup" style="-fx-background-color: #4048d4;" text="Sign Up" textFill="WHITE">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </Button>
-        <Button fx:id="signupButton" layoutX="432.0" layoutY="333.0" mnemonicParsing="false" onAction="#handleSuccessfulRegistration" style="-fx-background-color: #4048d4;" text="Go to login page" textFill="WHITE">
+        <Button fx:id="signupButton" layoutX="432.0" layoutY="333.0" mnemonicParsing="false" onAction="#onHandleSuccessfulRegistration" style="-fx-background-color: #4048d4;" text="Go to login page" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font></Button>

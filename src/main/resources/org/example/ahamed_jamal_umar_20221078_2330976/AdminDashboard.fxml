@@ -5,19 +5,19 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="245.0" prefWidth="224.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.ahamed_jamal_umar_20221078_2330976.Controller">
+<AnchorPane prefHeight="245.0" prefWidth="246.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.ahamed_jamal_umar_20221078_2330976.Controller">
    <children>
-      <Label layoutX="36.0" layoutY="25.0" text="DASHBOARD" textFill="#4048d4">
+      <Label layoutX="48.0" layoutY="24.0" text="DASHBOARD" textFill="#4048d4">
          <font>
             <Font name="System Bold Italic" size="24.0" />
          </font>
       </Label>
-      <Button layoutX="61.0" layoutY="93.0" mnemonicParsing="false" onAction="#onAddArticles" style="-fx-background-color: #4048d4;" text="Add Articles" textFill="WHITE">
+      <Button layoutX="73.0" layoutY="93.0" mnemonicParsing="false" onAction="#onAddArticles" style="-fx-background-color: #4048d4;" text="Add Articles" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Button>
-      <Button fx:id="exitButton" layoutX="76.0" layoutY="149.0" mnemonicParsing="false" onAction="#onLogoutButton" style="-fx-background-color: #4048d4;" text="Log out" textFill="WHITE">
+      <Button fx:id="exitButton" layoutX="88.0" layoutY="148.0" mnemonicParsing="false" onAction="#onLogoutButton" style="-fx-background-color: #4048d4;" text="Log out" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>

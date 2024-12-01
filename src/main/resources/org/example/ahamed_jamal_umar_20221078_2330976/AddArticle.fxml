@@ -7,40 +7,34 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="478.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.ahamed_jamal_umar_20221078_2330976.Controller">
+<AnchorPane prefHeight="425.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.ahamed_jamal_umar_20221078_2330976.Controller">
    <children>
-      <Label layoutX="246.0" layoutY="31.0" text="Add Articles" textFill="#4048d4">
+      <Label layoutX="248.0" layoutY="29.0" text="Add Articles" textFill="#4048d4">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <Label layoutX="72.0" layoutY="89.0" text="Enter the category:" textFill="#4048d4">
+      <Label layoutX="72.0" layoutY="84.0" text="Enter the title:" textFill="#4048d4">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <Label layoutX="72.0" layoutY="164.0" text="Enter the title:" textFill="#4048d4">
+      <Label layoutX="72.0" layoutY="170.0" text="Enter the description:" textFill="#4048d4">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <Label layoutX="72.0" layoutY="236.0" text="Enter the description:" textFill="#4048d4">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Label>
-      <TextField fx:id="addCategoryField" layoutX="72.0" layoutY="122.0" prefHeight="26.0" prefWidth="452.0" />
-      <TextField fx:id="addTitleField" layoutX="72.0" layoutY="197.0" prefHeight="26.0" prefWidth="452.0" />
-      <Button layoutX="146.0" layoutY="411.0" mnemonicParsing="false" onAction="#onArticleToDashboard" style="-fx-background-color: #4048d4;" text="Back" textFill="WHITE">
+      <TextField fx:id="addTitleField" layoutX="72.0" layoutY="118.0" prefHeight="26.0" prefWidth="452.0" />
+      <Button layoutX="144.0" layoutY="363.0" mnemonicParsing="false" onAction="#onArticleToDashboard" style="-fx-background-color: #4048d4;" text="Back" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Button>
-      <Button layoutX="376.0" layoutY="411.0" mnemonicParsing="false" onAction="#onAddEnter" style="-fx-background-color: #4048d4;" text="Add" textFill="WHITE">
+      <Button layoutX="378.0" layoutY="363.0" mnemonicParsing="false" onAction="#onAddEnter" style="-fx-background-color: #4048d4;" text="Add" textFill="WHITE">
       <font>
          <Font name="System Bold" size="12.0" />
       </font>
       </Button>
-      <TextArea fx:id="addDescriptionArea" layoutX="72.0" layoutY="264.0" prefHeight="128.0" prefWidth="452.0" wrapText="true" />
+      <TextArea fx:id="addDescriptionArea" layoutX="72.0" layoutY="207.0" prefHeight="128.0" prefWidth="452.0" wrapText="true" />
    </children>
 </AnchorPane>
