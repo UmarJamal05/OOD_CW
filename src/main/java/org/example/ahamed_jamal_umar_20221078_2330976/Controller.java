@@ -1,8 +1,6 @@
 package org.example.ahamed_jamal_umar_20221078_2330976;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,7 +20,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 public class Controller {
 
@@ -638,8 +635,7 @@ public class Controller {
     }
     // This method can be called to generate preferences and load them into the ListView
     public void generatePreferences(String articlesFilePath) {
-        executor.submit(() -> {
-            try {
+        try {
                 RecommendationEngine recommendationEngine = new RecommendationEngine(loggedInUsername);
                 List<String> recommendations = recommendationEngine.recommendArticles(articlesFilePath);
                 savePreferences(recommendations);  // Save recommendations
@@ -647,17 +643,18 @@ public class Controller {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
     }
 
     // Save the recommendations to a preferences file
-    private synchronized void savePreferences(List<String> recommendations) {
-        try {
-            String preferencesFileName = loggedInUsername + "_preferences.txt";
-            Files.write(Paths.get(preferencesFileName), recommendations);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void savePreferences(List<String> recommendations) {
+        executor.submit(() -> {
+            try {
+                String preferencesFileName = loggedInUsername + "_preferences.txt";
+                Files.write(Paths.get(preferencesFileName), recommendations);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     // Read preferences from the file (if you want to read from file)

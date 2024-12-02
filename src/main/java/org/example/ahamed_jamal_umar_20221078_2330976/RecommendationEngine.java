@@ -1,5 +1,6 @@
 package org.example.ahamed_jamal_umar_20221078_2330976;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -10,10 +11,10 @@ import org.apache.commons.text.similarity.CosineSimilarity;
 
 public class RecommendationEngine {
 
-    private String loggedInUsername;
+    private static String loggedInUsername;
 
     public RecommendationEngine(String username) {
-        this.loggedInUsername = username;
+        loggedInUsername = username;
     }
 
     public List<String> recommendArticles(String articlesFilePath) throws Exception {
@@ -150,12 +151,27 @@ public class RecommendationEngine {
         return tokenizedText;
     }
 
-    private void savePreferences(List<String> recommendations) throws Exception {
+    public static void savePreferences(List<String> recommendations) throws IOException, InterruptedException, ExecutionException {
         String preferencesFileName = loggedInUsername + "_preferences.txt";
-        List<String> lines = recommendations.stream()
-                .map(title -> "Recommended: " + title)
-                .collect(Collectors.toList());
+        ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        Files.write(Paths.get(preferencesFileName), lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        // Task to write preferences to a file
+        Callable<Void> saveTask = () -> {
+            List<String> lines = recommendations.stream()
+                    .map(title -> "Recommended: " + title)
+                    .collect(Collectors.toList());
+
+            Files.write(Paths.get(preferencesFileName), lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            return null;
+        };
+
+        // Submit task to executor
+        Future<Void> future = executor.submit(saveTask);
+
+        // Wait for the task to complete
+        future.get();
+
+        // Shutdown the executor
+        executor.shutdown();
     }
 }

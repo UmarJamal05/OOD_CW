@@ -9,15 +9,21 @@ import java.io.IOException;
 public class History {
     private String title;
     private String rating;
+    private Article article; // Composition: History "owns" Article
     private String loggedInUsername;
+    public History(Article article) {
+        this.article = article;
+    }
 
     public History(String title, String rating) {
         this.title = title;
         this.rating = rating;
     }
-    public History(String loggedInUsername){
+
+    public History(String loggedInUsername) {
         this.loggedInUsername = loggedInUsername;
     }
+
     public void loadHistory(ListView<String> historyListView) {
         String historyFilePath = loggedInUsername + "_history.csv";
 

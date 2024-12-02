@@ -7,6 +7,7 @@ import java.util.*;
 
 public class SystemAdministrator extends Person {
     private String name;
+    private List<Article> articles; // Aggregation: SystemAdministrator manages Articles
 
     public SystemAdministrator() {
         super("u.a.j.005");
@@ -40,7 +41,6 @@ public class SystemAdministrator extends Person {
 
     // Method for adding an article
     public boolean addArticle(String title, String description, String filePath) {
-        // Classify category based on the description
         String category = Article.classifyCategory(description);
 
         String articleData = String.format("%nCategory: %s%nTitle: %s%nDescription: %s", category, title, description);
@@ -48,10 +48,10 @@ public class SystemAdministrator extends Person {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
             writer.newLine();
             writer.write(articleData);
-            return true; // Article added successfully
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
-            return false; // Failed to add article
+            return false;
         }
     }
 }

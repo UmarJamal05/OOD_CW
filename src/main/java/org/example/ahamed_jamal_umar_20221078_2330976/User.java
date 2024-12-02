@@ -1,13 +1,23 @@
 package org.example.ahamed_jamal_umar_20221078_2330976;
 
 import java.io.*;
+import java.util.List;
 
 public class User extends Person {
     private String username;
     private String firstName;
     private String lastName;
     private String email;
+    private List<Article> likedArticles; // Association: User interacts with Articles
+    private RecommendationEngine recommendationEngine; // Association: User interacts with RecommendationEngine
+    private History history; // Association: User interacts with History
     private static final String USER_FILE_PATH = "users.txt";
+    public User(String username, String password, History history, RecommendationEngine recommendationEngine) {
+        super(password);
+        this.username = username;
+        this.history = history;
+        this.recommendationEngine = recommendationEngine;
+    }
 
     public User(String firstName, String lastName, String email, String username, String password) {
         super(password);
@@ -17,22 +27,26 @@ public class User extends Person {
         this.email = email;
     }
 
-    // Getters
+    // Getters and setters
     public String getUsername() {
         return username;
     }
+
     @Override
     public String getPassword() {
         return super.password;
     }
-    public void setPassword(String password) { this.password = password; }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     // Login method
     public static boolean login(String username, String password, String usersFilePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(usersFilePath))) {
-            String line = reader.readLine(); // Read the first line (header)
-            while ((line = reader.readLine()) != null) { // Skip the header and read subsequent lines
-                String[] parts = line.split(","); // Split by comma (",")
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
                 if (parts.length >= 5) {
                     String storedUsername = parts[0];
                     String storedPassword = parts[1];
@@ -49,39 +63,25 @@ public class User extends Person {
 
     // Register method
     public static boolean register(User user, String usersFilePath) {
-        // Check if the username is already taken
         if (isUsernameTaken(user.getUsername(), usersFilePath)) {
             return false; // Registration failed if the username is already taken
         }
-
-        // Check if the file is empty (or doesn't exist)
-        File file = new File(usersFilePath);
-        boolean isFileEmpty = !file.exists() || file.length() == 0;
-
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(usersFilePath, true))) {
-            // If the file is empty, write the header first
-            if (isFileEmpty) {
-                writer.write("Username:Password:Firstname:Lastname:Email Address");
-                writer.newLine();  // Move to the next line
-            }
-
-            // Write the user details to the file
             writer.write(user.toString());
             writer.newLine();
             return true; // Registration successful
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return false; // Registration failed
     }
 
-    // Helper method to check if a username is already taken
+    // Helper method to check if a username is taken
     public static boolean isUsernameTaken(String username, String usersFilePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(usersFilePath))) {
-            String line = reader.readLine(); // Read the first line (header)
-            while ((line = reader.readLine()) != null) { // Skip the header and read subsequent lines
-                String[] parts = line.split(","); // Split by comma (",")
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
                 if (parts.length >= 5) {
                     String storedUsername = parts[0];
                     if (storedUsername.equals(username)) {
@@ -94,6 +94,7 @@ public class User extends Person {
         }
         return false;
     }
+
     public static String getUserDetails(String username) {
         try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE_PATH))) {
             // Skip the header
@@ -117,6 +118,8 @@ public class User extends Person {
         return "No details found for the username: " + username;
     }
 
+
+    // ToString method for User details
     @Override
     public String toString() {
         return username + "," + password + "," + firstName + "," + lastName + "," + email;
