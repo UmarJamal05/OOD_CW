@@ -12,6 +12,7 @@ public class Article {
 
     public Article() {}
 
+    // Constructor to initialize article properties
     public Article(String title, String description) {
         this.title = title;
         this.description = description;
@@ -46,6 +47,7 @@ public class Article {
         this.description = (this.description == null ? "" : this.description + "\n") + additionalDescription;
     }
 
+    // Method to load articles from the text file
     public static List<Article> loadArticlesFromFile(String articlesFilePath) {
         List<Article> articles = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(articlesFilePath))) {
@@ -86,6 +88,7 @@ public class Article {
         return articles;
     }
 
+    // Method to classify the category of the article through the description using nlp
     public static String classifyCategory(String description) {
         Map<String, List<String>> categoryKeywords = new HashMap<>();
 

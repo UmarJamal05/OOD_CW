@@ -18,39 +18,35 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Controller {
+    private String loggedInUsername; // Stores the logged-in user's username
+    public Button signupButton; // Button to trigger the signup page
+    @FXML
+    private Button exitButton; // Button to close the application
+    @FXML
+    private TextField firstnameField, lastnameField, emailaddressField, usernameField, passwordField, confirmpasswordField; // Fields for user registration
+    @FXML
+    private TextField UsernameLoginInput, PasswordLoginInput; // Fields for user login
+    @FXML
+    private TextField SystemAdminName, SystemAdminPassword; // Fields for system admin login
+    @FXML
+    private TextField newPasswordField, newConfirmPasswordField; // Fields for password change
+    @FXML
+    private TextField addTitleField; // Title input for adding articles
+    @FXML
+    private TextArea addDescriptionArea; // Description area for adding articles
+    @FXML
+    private TextArea userDetailsTextArea; // Display user details
+    @FXML
+    private ListView<String> historyListView; // Displays user history
+    @FXML
+    private ListView<String> preferenceListView; // Displays user preferences
+    private static final String USER_FILE_PATH = "users.txt"; // File path for user data
+    private static final String ARTICLES_FILE_PATH = "articles.txt"; // File path for article data
+    private History history; // Object for user history
 
-    private String loggedInUsername;
-    public Button signupButton;
-    @FXML
-    private Button exitButton;
-    @FXML
-    private TextField firstnameField, lastnameField, emailaddressField, usernameField, passwordField, confirmpasswordField;
-    @FXML
-    private TextField UsernameLoginInput, PasswordLoginInput;
-    @FXML
-    private TextField SystemAdminName, SystemAdminPassword;
-    @FXML
-    private TextField newPasswordField, newConfirmPasswordField;
-    @FXML
-    private TextField addTitleField;
-    @FXML
-    private TextArea addDescriptionArea;
-    @FXML
-    private TextArea userDetailsTextArea;
-    @FXML
-    private ListView<String> historyListView;
-    @FXML
-    private ListView<String> preferenceListView;
-
-    private static final String USER_FILE_PATH = "users.txt";
-    private static final String ARTICLES_FILE_PATH = "articles.txt";
-    private History history;
-    ExecutorService executor = Executors.newFixedThreadPool(10);
-
+    // Method to set the logged-in user's username
     private void setLoggedInUsername(String username) {
         this.loggedInUsername = username;
     }
@@ -59,6 +55,7 @@ public class Controller {
         history = new History(loggedInUsername);
         history.loadHistory(historyListView); // Load the history into the ListView
     }
+    // Method to transition to the Welcome page
     @FXML
     public void onWelcomePage(ActionEvent event) {
         try {
@@ -74,6 +71,7 @@ public class Controller {
             e.printStackTrace();
         }
     }
+    // Method to transition to the System Admin login page
     @FXML
     public void onSystemAdminPage(ActionEvent event) {
         try {
@@ -89,6 +87,7 @@ public class Controller {
             e.printStackTrace();
         }
     }
+    // Method to transition to the User login page
     @FXML
     public void onUserPage(ActionEvent event) {
         try {
@@ -104,6 +103,7 @@ public class Controller {
             e.printStackTrace();
         }
     }
+    // Method to handle the System Admin login process
     @FXML
     private void onAdminLogin(ActionEvent event) {
         String username = SystemAdminName.getText();
@@ -121,18 +121,14 @@ public class Controller {
         // Validate login credentials using the SystemAdministrator method
         if (admin.validateLogin(username, password)) {
             try {
-                // Load the Dashboard.fxml file
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("AdminDashboard.fxml"));
                 Parent dashboardRoot = loader.load();
 
-                // Get the current stage from the event source
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-                // Set the new scene with Dashboard.fxml
                 Scene scene = new Scene(dashboardRoot);
                 stage.setScene(scene);
 
-                // Optional: Set the title for the new stage
                 stage.setTitle("Dashboard");
 
                 // Show the stage
@@ -145,6 +141,7 @@ public class Controller {
             showAlert("Login Failed", "Invalid name or password.", Alert.AlertType.ERROR);
         }
     }
+    // Method to handle User login process
     @FXML
     private void onUserLogin(ActionEvent event) {
         String name = UsernameLoginInput.getText();
@@ -178,7 +175,7 @@ public class Controller {
             showAlert("Login Failed", "Invalid username or password.", Alert.AlertType.ERROR);
         }
     }
-
+    // Method to transition to the add article page
     @FXML
     public void onAddArticles(ActionEvent event) {
         try {
@@ -194,7 +191,7 @@ public class Controller {
             e.printStackTrace();
         }
     }
-
+    // Method to handle adding a new article
     @FXML
     private void onAddEnter() {
         String title = addTitleField.getText().trim();
@@ -206,7 +203,7 @@ public class Controller {
             return;
         }
 
-        // Create an instance of SystemAdministrator
+        // Creating an instance of SystemAdministrator
         SystemAdministrator admin = new SystemAdministrator();
         String filePath = "articles.txt";
 
@@ -232,7 +229,7 @@ public class Controller {
             showAlert("Error", "An unexpected error occurred.", Alert.AlertType.ERROR);
         }
     }
-
+    // Method to handle transitioning back to Admin Dashboard
     @FXML
     public void onArticleToDashboard(ActionEvent event) {
         try {
@@ -248,7 +245,7 @@ public class Controller {
             e.printStackTrace();
         }
     }
-
+    // Method to handle user signup
     @FXML
     public void onSignup(ActionEvent event) {
         try {
@@ -263,9 +260,10 @@ public class Controller {
             e.printStackTrace();
         }
     }
-
+    // Method to handle registration of new users
     @FXML
     private void onRegisterSignup(ActionEvent event) {
+        // To get users details from the text fields
         String firstName = firstnameField.getText();
         String lastName = lastnameField.getText();
         String email = emailaddressField.getText();
@@ -273,31 +271,35 @@ public class Controller {
         String password = passwordField.getText();
         String confirmPassword = confirmpasswordField.getText();
 
+        // Methods to check for validations
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() ||
                 username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             showAlert("Registration Failed", "All fields must be filled.", Alert.AlertType.ERROR);
             return;
         }
 
+        // Calling the isValidEmail to check if email is not valid
         if (!isValidEmail(email)) {
             showAlert("Registration Failed", "Please enter a valid email address.", Alert.AlertType.ERROR);
             return;
         }
 
+        // Validation for password
         if (password.length() < 8) {
             showAlert("Registration Failed", "Password must be at least 8 characters long.", Alert.AlertType.ERROR);
             return;
         }
-
         if (!password.equals(confirmPassword)) {
             showAlert("Registration Failed", "Passwords do not match.", Alert.AlertType.ERROR);
             return;
         }
 
+        // Creating an instance of User
         User newUser = new User(firstName, lastName, email, username, password);
 
         if (User.register(newUser, USER_FILE_PATH)) {
             showAlert("Registration Successful", "User registered successfully!", Alert.AlertType.INFORMATION);
+            // Fields are cleared after successful registration
             firstnameField.clear();
             lastnameField.clear();
             emailaddressField.clear();
@@ -308,7 +310,7 @@ public class Controller {
             showAlert("Registration Failed", "Username is already taken. Please choose a different one.", Alert.AlertType.ERROR);
         }
     }
-
+    // Method to go back to login page for user
     @FXML
     private void onHandleSuccessfulRegistration() {
         try {
@@ -324,8 +326,7 @@ public class Controller {
             e.printStackTrace();
         }
     }
-
-    // Method to handle View Articles button click
+    // Method to handle view articles button click
     @FXML
     public void onViewArticle(ActionEvent event) {
         try {
@@ -355,10 +356,11 @@ public class Controller {
             e.printStackTrace();
         }
     }
-
+    // Method to go to view history page
     @FXML
     public void onViewHistory(ActionEvent event) {
         try {
+            // Load the UserHistory file
             FXMLLoader loader = new FXMLLoader(getClass().getResource("UserHistory.fxml"));
             Parent root = loader.load();
 
@@ -374,7 +376,7 @@ public class Controller {
             showAlert("Error", "Failed to open user history.", Alert.AlertType.ERROR);
         }
     }
-
+    // Method to go from user profile to dashboard
     @FXML
     public void onProfileToDashboard(ActionEvent event) {
         try {
@@ -384,10 +386,8 @@ public class Controller {
             Controller Controller = loader.getController();
             Controller.setLoggedInUsername(loggedInUsername);
 
-            // Get the current stage
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 
-            // Set the new scene
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
@@ -395,6 +395,7 @@ public class Controller {
             showAlert("Error", "Could not load the dashboard.", Alert.AlertType.ERROR);
         }
     }
+    // Method to go to manage profile page
     @FXML
     public void onManageProfile(ActionEvent event) {
         try {
@@ -405,18 +406,18 @@ public class Controller {
             Controller.showUserDetails(loggedInUsername);
             Controller.setLoggedInUsername(loggedInUsername);
 
-            // Get the current stage (window)
+
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 
             stage.setTitle("User Profile");
-            // Set the new scene for the stage (window)
+
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            // Handle the error appropriately (e.g., show an alert)
         }
     }
+    //Method to go to change password page
     @FXML
     public void onPasswordChange(ActionEvent event) {
         try {
@@ -426,18 +427,19 @@ public class Controller {
             Controller Controller = loader.getController();
             Controller.setLoggedInUsername(loggedInUsername);
 
-            // Get the current stage (window)
+
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 
             stage.setTitle("Change Password");
-            // Set the new scene for the stage (window)
+
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            // Handle the error appropriately (e.g., show an alert)
+            // Handle the error appropriately
         }
     }
+    // Method to change password for user
     @FXML
     private void onChangePassword(ActionEvent event) {
         String newPassword = newPasswordField.getText();
@@ -460,7 +462,7 @@ public class Controller {
             List<String> updatedLines = new ArrayList<>();
             boolean userFound = false;
 
-            // Skip the first line (header line)
+            // Skips the first line (header line)
             reader.readLine();
 
             // Read each line and check for the matching username
@@ -494,6 +496,7 @@ public class Controller {
             }
 
             showAlert("Success", "Password updated successfully!", Alert.AlertType.INFORMATION);
+            // Fields are cleared after successful password change
             newPasswordField.clear();
             newConfirmPasswordField.clear();
         } catch (IOException e) {
@@ -501,6 +504,7 @@ public class Controller {
             showAlert("Error", "An error occurred while updating the password.", Alert.AlertType.ERROR);
         }
     }
+    // Method to go from preferences to dashboard
     @FXML
     private void onPreferenceToDashboard(ActionEvent event) {
         try {
@@ -510,18 +514,18 @@ public class Controller {
             Controller Controller = loader.getController();
             Controller.setLoggedInUsername(loggedInUsername);
 
-            // Get the current stage (window)
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 
             stage.setTitle("Dashboard");
-            // Set the new scene for the stage (window)
+
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            // Handle the error appropriately (e.g., show an alert)
+            // Handle the error appropriately
         }
     }
+    // Method to transition to preferences page
     @FXML
     private void onPreferences(ActionEvent event) {
         try {
@@ -548,11 +552,13 @@ public class Controller {
             e.printStackTrace();
         }
     }
+    // Method to log out from application
     @FXML
     private void onLogoutButton(ActionEvent event) {
         Stage stage = (Stage) exitButton.getScene().getWindow();
         stage.close();
     }
+    // Method to check if email is valid
     private boolean isValidEmail(String email) {
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         return email.matches(emailRegex);
@@ -606,6 +612,7 @@ public class Controller {
             e.printStackTrace();
         }
     }
+    // Adding the user history to their specific file
     private void appendHistoryToCSV(String action, String articleTitle) {
         // Construct the file path using the username
         String historyFilePath = loggedInUsername + "_history.csv";
@@ -628,36 +635,17 @@ public class Controller {
             e.printStackTrace();
         }
     }
-    private void showUserDetails(String loggedInUsername) {
-        String details = User.getUserDetails(loggedInUsername);
-        userDetailsTextArea.setText(details);
-        userDetailsTextArea.setEditable(false);
-    }
-    // This method can be called to generate preferences and load them into the ListView
+    // This method is called to generate preferences and load them into the ListView
     public void generatePreferences(String articlesFilePath) {
         try {
                 RecommendationEngine recommendationEngine = new RecommendationEngine(loggedInUsername);
                 List<String> recommendations = recommendationEngine.recommendArticles(articlesFilePath);
-                savePreferences(recommendations);  // Save recommendations
                 displayRecommendations(recommendations);  // Display recommendations
             } catch (Exception e) {
                 e.printStackTrace();
             }
     }
-
-    // Save the recommendations to a preferences file
-    private void savePreferences(List<String> recommendations) {
-        executor.submit(() -> {
-            try {
-                String preferencesFileName = loggedInUsername + "_preferences.txt";
-                Files.write(Paths.get(preferencesFileName), recommendations);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    // Read preferences from the file (if you want to read from file)
+    // Read preferences from the file
     public List<String> readPreferences() {
         try {
             String preferencesFileName = loggedInUsername + "_preferences.txt";
@@ -671,7 +659,6 @@ public class Controller {
             return new ArrayList<>(); // Return an empty list on failure
         }
     }
-
     // Display the recommendations in the ListView
     public void displayRecommendations(List<String> recommendations) {
         if (recommendations != null) {
@@ -679,6 +666,13 @@ public class Controller {
             preferenceListView.getItems().addAll(recommendations);  // Add the recommendations to the ListView
         }
     }
+    // Method to show user details
+    private void showUserDetails(String loggedInUsername) {
+        String details = User.getUserDetails(loggedInUsername);
+        userDetailsTextArea.setText(details);
+        userDetailsTextArea.setEditable(false);
+    }
+    // Utility method to show feedback
     private void showFeedback(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Feedback");
@@ -686,6 +680,7 @@ public class Controller {
         alert.setContentText(message);
         alert.showAndWait();
     }
+    // Utility method to show alerts
     private void showAlert(String title, String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

@@ -17,6 +17,7 @@ public class RecommendationEngine {
         loggedInUsername = username;
     }
 
+    // Method to give recommended articles
     public List<String> recommendArticles(String articlesFilePath) throws Exception {
         String historyFilePath = loggedInUsername + "_history.csv";
 
@@ -44,6 +45,8 @@ public class RecommendationEngine {
         return recommendations;
     }
 
+
+    // Method to go through the articles file
     private List<Article> parseArticles(String filePath) throws Exception {
         List<Article> articles = new ArrayList<>();
         List<String> lines = Files.readAllLines(Paths.get(filePath));
@@ -71,6 +74,7 @@ public class RecommendationEngine {
         return articles;
     }
 
+    //  Method to go through user history to get the user ratings
     private Map<String, String> parseUserHistory(String filePath) throws Exception {
         Map<String, String> userRatings = new HashMap<>();
         if (!Files.exists(Paths.get(filePath))) {
@@ -138,6 +142,7 @@ public class RecommendationEngine {
                 .collect(Collectors.toList());
     }
 
+    // Method to tokenizes the given text into words and counts their occurrences
     private Map<CharSequence, Integer> tokenizeText(String text) {
         Map<CharSequence, Integer> tokenizedText = new HashMap<>();
         String[] words = text.split("\\W+");  // Split by non-word characters
@@ -151,6 +156,7 @@ public class RecommendationEngine {
         return tokenizedText;
     }
 
+    // Method to save preferences to a text file for a specific user
     public static void savePreferences(List<String> recommendations) throws IOException, InterruptedException, ExecutionException {
         String preferencesFileName = loggedInUsername + "_preferences.txt";
         ExecutorService executor = Executors.newSingleThreadExecutor();

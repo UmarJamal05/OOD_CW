@@ -8,17 +8,12 @@ public class User extends Person {
     private String firstName;
     private String lastName;
     private String email;
-    private List<Article> likedArticles; // Association: User interacts with Articles
-    private RecommendationEngine recommendationEngine; // Association: User interacts with RecommendationEngine
-    private History history; // Association: User interacts with History
-    private static final String USER_FILE_PATH = "users.txt";
-    public User(String username, String password, History history, RecommendationEngine recommendationEngine) {
-        super(password);
-        this.username = username;
-        this.history = history;
-        this.recommendationEngine = recommendationEngine;
-    }
+    private List<Article> likedArticles; // List of articles liked by the user
+    private List<RecommendationEngine> recommendationEngine; // Recommendation engines associated with the user
+    private List<History> history; // User's article history
+    private static final String USER_FILE_PATH = "users.txt";// Path to store user details
 
+    // Constructor to initialize user attributes
     public User(String firstName, String lastName, String email, String username, String password) {
         super(password);
         this.username = username;
@@ -41,7 +36,19 @@ public class User extends Person {
         this.password = password;
     }
 
-    // Login method
+    public List<History> getHistory() {
+        return history;
+    }
+
+    public List<RecommendationEngine> getRecommendationEngine() {
+        return recommendationEngine;
+    }
+
+    public List<Article> getLikedArticles() {
+        return likedArticles;
+    }
+
+    // Static method to validate login credentials from a file
     public static boolean login(String username, String password, String usersFilePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(usersFilePath))) {
             String line;
@@ -61,7 +68,7 @@ public class User extends Person {
         return false; // Login failed
     }
 
-    // Register method
+    // Static method to register a new user to a file
     public static boolean register(User user, String usersFilePath) {
         if (isUsernameTaken(user.getUsername(), usersFilePath)) {
             return false; // Registration failed if the username is already taken
@@ -76,7 +83,7 @@ public class User extends Person {
         return false; // Registration failed
     }
 
-    // Helper method to check if a username is taken
+    // Checks if a username is already taken
     public static boolean isUsernameTaken(String username, String usersFilePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(usersFilePath))) {
             String line;
@@ -92,9 +99,10 @@ public class User extends Person {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+        return false; // Username is available
     }
 
+    // Retrieves user details by username
     public static String getUserDetails(String username) {
         try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE_PATH))) {
             // Skip the header
@@ -115,11 +123,11 @@ public class User extends Person {
             e.printStackTrace();
         }
 
-        return "No details found for the username: " + username;
+        return "No details found for the username: " + username; // User not found
     }
 
 
-    // ToString method for User details
+    // Converts user details to a comma-separated string for file storage
     @Override
     public String toString() {
         return username + "," + password + "," + firstName + "," + lastName + "," + email;
