@@ -1,5 +1,4 @@
 Username:Password:Firstname:Lastname:Email Address
 UmarJamal05,123456789,Umar,Jamal,umarjamal@gmail.com
 osaldealwis,123456789,Osal,DeAlwis,osaldealwis@gmail.com
-abdullah006,1111111111,abdullah,nazly,abdullah@gmail.com
-bobby,2222222222,Bob,Perera,bob@gmail.com
+fathi,1111111111,Fathima,Jamal,fathima@gmail.com

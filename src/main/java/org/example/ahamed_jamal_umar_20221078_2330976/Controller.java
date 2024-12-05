@@ -284,6 +284,12 @@ public class Controller {
             return;
         }
 
+        // Validation for username
+        if (username.length() < 5) {
+            showAlert("Registration Failed", "Username must be at least 5 characters long.", Alert.AlertType.ERROR);
+            return;
+        }
+
         // Validation for password
         if (password.length() < 8) {
             showAlert("Registration Failed", "Password must be at least 8 characters long.", Alert.AlertType.ERROR);

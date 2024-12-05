@@ -48,47 +48,67 @@ public class RecommendationEngine {
 
     // Method to go through the articles file
     private List<Article> parseArticles(String filePath) throws Exception {
+        // List to store all parsed articles
         List<Article> articles = new ArrayList<>();
+
+        // Read all lines from the file
         List<String> lines = Files.readAllLines(Paths.get(filePath));
 
+        // Variables to hold the current title and description being processed
         String title = "";
         StringBuilder description = new StringBuilder();
 
+        // Iterate through each line in the file
         for (String line : lines) {
+            // If the line starts with "Title:", it indicates the start of a new article
             if (line.startsWith("Title:")) {
+                // If there is an existing title, add the previous article to the list
                 if (!title.isEmpty()) {
                     articles.add(new Article(title, description.toString().trim()));
                 }
+                // Set the new title and reset the description
                 title = line.substring(6).trim();
                 description.setLength(0);
             } else if (line.startsWith("Description:")) {
+                // If the line starts with "Description:", append the description text
                 description.append(line.substring(12).trim()).append(" ");
             }
         }
 
-        // Add the last article
+        // After reading all lines, add the last article if it exists
         if (!title.isEmpty()) {
             articles.add(new Article(title, description.toString().trim()));
         }
 
+        // Returning the list of articles parsed from the file
         return articles;
     }
 
-    //  Method to go through user history to get the user ratings
+    // Method to parse through user history from a CSV file and return a map of article titles and ratings
     private Map<String, String> parseUserHistory(String filePath) throws Exception {
+        // Map to store user ratings for articles
         Map<String, String> userRatings = new HashMap<>();
+
+        // To check if the history file exists
         if (!Files.exists(Paths.get(filePath))) {
-            return userRatings; // Return empty map if file does not exist
+            // Return empty map if the file does not exist
+            return userRatings;
         }
 
+        // Read all the lines from the user history file
         List<String> lines = Files.readAllLines(Paths.get(filePath));
+
+        // Iterate through each line in the file
         for (String line : lines) {
+            // Split the line into two parts, article title and user rating
             String[] parts = line.split(",");
             if (parts.length == 2) {
+                // Store the title and rating in the map
                 userRatings.put(parts[0].trim(), parts[1].trim().toLowerCase());
             }
         }
 
+        // Returning the map containing article titles and user ratings
         return userRatings;
     }
 
